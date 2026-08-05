@@ -1,0 +1,12 @@
+.DS_Store
+.env
+.env.*
+*.log
+*.pid
+*.db
+*.sqlite
+*.sqlite3
+*.yaml.local
+client-share.env
+work/
+tmp/
