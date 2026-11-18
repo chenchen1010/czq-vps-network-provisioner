@@ -1,4 +1,4 @@
 interface:
   display_name: "海外 VPS 配网与 Clash 节点交付"
-  short_description: "部署并验收 x-ui Reality 节点，生成 Mac Clash 分流 YAML"
-  default_prompt: "使用 $czq-vps-network-provisioner 配置这台海外 VPS 的 x-ui/VLESS Reality 网络服务，为 Mac Clash Verge 生成海外社媒与 AI 工具分流 YAML，并按服务器、端口、公网链路、Mihomo、目标网站、出口 IP 和账号登录分别报告证据。"
+  short_description: "首次配好管理面板和个人 Clash/Mihomo 分流订阅，完成真实联网验收"
+  default_prompt: "使用 $czq-vps-network-provisioner 配置这台海外 VPS 的 x-ui/VLESS Reality 网络服务，首次交付可登录的面板信息和带国内外分流的 HTTPS Clash/Mihomo 订阅，用新建独立客户端完成真实联网和流量验收，并提供本地 YAML 备份；凭证仅在私人交接文件中交付。"

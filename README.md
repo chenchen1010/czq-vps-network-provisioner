@@ -1,6 +1,6 @@
 # CZQ VPS Network Provisioner
 
-把一台海外 VPS 交付成真正可用、可回滚、可验收的 Mac Clash 节点。
+首次配置就交付可登录的管理面板和可直接导入的个人 Clash/Mihomo 订阅。管理员可以增删员工、设置流量和查看用量，员工拿到链接即可使用国内外分流。
 
 这个 Codex Skill 不止安装 x-ui。它会继续检查 Xray 与 Mihomo 是否兼容、公网端口是否被机房重定向、Google/YouTube 是否真实可达、出口 IP 是否正确，以及 TikTok、Facebook、Instagram、Claude、ChatGPT、Gemini、Grok 是否按规则走海外节点。
 
@@ -27,7 +27,9 @@
 ## 主要能力
 
 - 新装或复用 3x-ui，并在改动前备份数据库、Xray 二进制和配置。
-- 配置 VLESS TCP/RAW Reality Vision 节点。
+- 配置 VLESS TCP/RAW Reality Vision 节点，并安全交付完整面板链接、用户名、密码。
+- 默认开启原生 HTTPS Clash/Mihomo 订阅与统一分流，员工无需编辑 YAML 或替换 UUID。
+- 新建独立验收客户端，通过其个人订阅验证联网、国内直连、海外出口及流量记录。
 - 检查已知的 Xray/Mihomo Reality 兼容问题。
 - 诊断 `REALITY authentication failed`、真实证书重定向和公网端口超时。
 - 从安全保存的 VLESS 分享信息生成 Mac Clash Verge YAML。
@@ -47,7 +49,8 @@ git clone https://github.com/chenchen1010/czq-vps-network-provisioner.git \
 
 ```text
 使用 $czq-vps-network-provisioner，把这台海外 VPS 配置成 x-ui/VLESS Reality 节点，
-为 Mac Clash Verge 生成海外社媒与 AI 工具分流 YAML，并完成真实联网验收。
+首次就交付面板登录信息和支持国内外分流的 HTTPS Clash/Mihomo 个人订阅，
+用新建客户端完成真实联网验收，并提供 Mac Clash Verge 本地 YAML 备份。
 ```
 
 需要向 Codex 提供：
@@ -58,9 +61,28 @@ git clone https://github.com/chenchen1010/czq-vps-network-provisioner.git \
 - 服务器是否承载其他业务。
 - 客户端类型；默认支持 macOS + Clash Verge Rev。
 
-Skill 会要求把凭证保存到被 Git 忽略的本地 `.env.local`，并设置为仅当前用户可读。凭证不会写入仓库、README 或最终报告。
+Skill 会要求把凭证保存到被 Git 忽略的本地 `.env.local`，并设置为仅当前用户可读。凭证不会写入仓库、README 或公开报告；完整面板登录信息写入权限为 `600` 的私人交接文件，最终回复提供文件链接。
 
-## 单独生成 Clash YAML
+## 首次配置的完成标准
+
+1. 管理员拿到完整面板链接、用户名和密码，并已验证 HTTPS 与登录。
+2. 面板已开启个人 HTTPS Clash/Mihomo 订阅，客户端详情中能复制 CLASH 地址。
+3. 订阅已包含国内直连、海外走节点的分流规则。
+4. 新建独立客户端，实际下载它的订阅并完成联网与流量计数验收。
+
+操作流程见 [面板交接与原生订阅](references/panel-and-subscription.md)。只有用户明确要求仅交文件时，才缩小为本地 YAML；已有环境保留其他账号和配置。
+
+统一分流模板可先在本地生成，不需要提供任何账号凭证：
+
+```bash
+node scripts/generate_clash_profile.mjs \
+  --subscription-template \
+  --out /secure/path/subscription-routing.yaml
+```
+
+此命令只生成模板；还需由 Skill 保存到面板、重启并验收实际订阅。个人节点由面板按各自订阅 ID 生成，不会把某个员工的账号共享给所有人。
+
+## 单独生成 Clash YAML（备份或明确的文件交付）
 
 先创建权限为 `600` 的分享文件：
 
@@ -119,8 +141,10 @@ Skill 会分别报告：
 4. Mac 外部 Mihomo Reality 握手。
 5. Google、YouTube、社媒和 AI 网站响应。
 6. 出口 IP 是否等于 VPS 地址。
-7. Clash YAML 是否生成、导入和启用。
-8. 浏览器账号是否真实登录成功。
+7. 面板登录是否验证，私人登录信息是否已交付。
+8. HTTPS 订阅、分流与新建独立客户端是否通过真实验收。
+9. 订阅/备用 YAML 是否实际导入和启用；不会把独立测试当作已给用户启用。
+10. 浏览器账号是否真实登录成功。
 
 其中任何一层未验证，都不会被包装成端到端完成。
 
@@ -139,13 +163,15 @@ Skill 会分别报告：
 ├── SKILL.md
 ├── agents/openai.yaml
 ├── references/
+│   ├── panel-and-subscription.md
 │   └── reality-mihomo-port-path-incident.md
 ├── scripts/
 │   ├── generate_clash_profile.mjs
 │   ├── probe_proxy.sh
 │   └── validate_mihomo_profile.sh
 └── tests/
-    └── fixture.env.example
+    ├── fixture.env.example
+    └── test_generator.py
 ```
 
 ## 参考资料

@@ -10,3 +10,10 @@
 client-share.env
 work/
 tmp/
+
+# Private first-run handoff and generated subscriptions
+private/
+
+# Python validation artifacts
+__pycache__/
+*.pyc
